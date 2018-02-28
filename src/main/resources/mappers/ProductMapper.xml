@@ -27,6 +27,7 @@
     from teamall_product
     where id = #{id,jdbcType=INTEGER}
   </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from teamall_product
     where id = #{id,jdbcType=INTEGER}
@@ -40,7 +41,7 @@
     values (#{id,jdbcType=INTEGER}, #{categoryId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, 
       #{subtitle,jdbcType=VARCHAR}, #{mainImage,jdbcType=VARCHAR}, #{subImages,jdbcType=VARCHAR}, 
       #{detail,jdbcType=VARCHAR}, #{price,jdbcType=DECIMAL}, #{stock,jdbcType=INTEGER}, 
-      #{status,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      #{status,jdbcType=INTEGER}, now(), now()
       )
   </insert>
   <insert id="insertSelective" parameterType="com.teamall.pojo.Product" >
@@ -115,7 +116,7 @@
         #{status,jdbcType=INTEGER},
       </if>
       <if test="createTime != null" >
-        #{createTime,jdbcType=TIMESTAMP},
+        now(),
       </if>
       <if test="updateTime != null" >
         #{updateTime,jdbcType=TIMESTAMP},
@@ -176,4 +177,39 @@
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <select id="selectList" resultType="com.teamall.pojo.Product" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM teamall_product
+    ORDER BY id ASC
+  </select>
+  <select id="selectByNameAndProductId" resultType="com.teamall.pojo.Product" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM teamall_product
+    <where>
+      <if test="productName!=null">
+        AND NAME LIKE #{productName}
+      </if>
+      <if test="productId!=null">
+        and id=#{productId}
+      </if>
+    </where>
+  </select>
+  <select id="selectByNameAndCategoryIds" resultType="com.teamall.pojo.Product" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM teamall_product
+    WHERE status=1
+    <if test="productName!=null">
+      AND NAME LIKE #{productName}
+    </if>
+    <if test="categoryIdList!=null">
+      and category_id in
+      <foreach collection="categoryIdList" item="item" index="index" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+  </select>
 </mapper>

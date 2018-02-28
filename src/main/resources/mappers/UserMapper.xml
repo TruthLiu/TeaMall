@@ -163,7 +163,7 @@
     WHERE username=#{username}
   </select>
 
-  <select id="selectLogin" resultType="com.teamall.pojo.User">
+  <select id="selectLogin" resultType="com.teamall.pojo.User" resultMap="BaseResultMap">
     SELECT
     <include refid="Base_Column_List"/>
     FROM teamall_users
